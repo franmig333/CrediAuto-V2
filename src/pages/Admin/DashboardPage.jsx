@@ -73,9 +73,16 @@ const DashboardPage = () => {
     };
 
     // --- ACTIONS ---
-    const saveProfile = () => {
+    const saveProfile = async () => {
+        setIsProcessing(true);
+        // Simulate small delay for UX or wait for update if it was async (it's sync in context but async in Supabase)
+        // context updateProfile is sync state update, but pushToSupabase is async fire-and-forget.
+        // We'll show feedback for a moment.
         updateProfile(profileForm);
-        alert('Perfil actualizado');
+        setTimeout(() => {
+            setIsProcessing(false);
+            alert('Perfil actualizado con éxito');
+        }, 800);
     };
 
     const saveCalculator = () => {
@@ -222,8 +229,11 @@ const DashboardPage = () => {
                     </div>
                 </div>
                 <div className="w-full md:w-2/3 space-y-4">
-                    <Input label="Nombre Visible" value={profileForm.name} onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })} />
-                    <Input label="Eslogan" value={profileForm.title} onChange={(e) => setProfileForm({ ...profileForm, title: e.target.value })} />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Input label="Nombre Asesor" value={profileForm.name} onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })} />
+                        <Input label="Teléfono (WhatsApp)" value={profileForm.phone} onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })} />
+                    </div>
+                    <Input label="Cargo / Título" value={profileForm.title} onChange={(e) => setProfileForm({ ...profileForm, title: e.target.value })} />
                     <Input label="Texto Botón WhatsApp" value={profileForm.whatsappButtonText} onChange={(e) => setProfileForm({ ...profileForm, whatsappButtonText: e.target.value })} />
                 </div>
             </div>
@@ -300,7 +310,10 @@ const DashboardPage = () => {
                 </div>
             </div>
 
-            <Button onClick={saveProfile} className="w-full bg-accent hover:bg-accent-hover text-white flex justify-center items-center gap-2 mt-4"><Save size={18} /> Guardar Perfil</Button>
+            <Button onClick={saveProfile} disabled={isProcessing} className="w-full bg-accent hover:bg-accent-hover text-white flex justify-center items-center gap-2 mt-4">
+                {isProcessing ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
+                {isProcessing ? 'Guardando...' : 'Guardar Perfil'}
+            </Button>
         </Card >
     );
 
