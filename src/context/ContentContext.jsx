@@ -36,6 +36,13 @@ const defaultVisibility = {
     form: true
 };
 
+const defaultTheme = {
+    bg: '#000000',
+    card: '#121212',
+    text: '#F3F4F6',
+    accent: '#E62429',
+};
+
 export const ContentProvider = ({ children }) => {
     // --- STATE ---
     const [profile, setProfile] = useState(() => {
@@ -63,12 +70,32 @@ export const ContentProvider = ({ children }) => {
         return saved ? JSON.parse(saved) : [];
     });
 
+    const [theme, setTheme] = useState(() => {
+        const saved = localStorage.getItem('site_theme');
+        return saved ? JSON.parse(saved) : defaultTheme;
+    });
+
     // --- EFFECTS (Persistence) ---
     useEffect(() => localStorage.setItem('crediAuto_profile', JSON.stringify(profile)), [profile]);
     useEffect(() => localStorage.setItem('crediAuto_calculator', JSON.stringify(calculatorConfig)), [calculatorConfig]);
     useEffect(() => localStorage.setItem('crediAuto_gallery', JSON.stringify(gallery)), [gallery]);
     useEffect(() => localStorage.setItem('crediAuto_visibility', JSON.stringify(visibility)), [visibility]);
     useEffect(() => localStorage.setItem('crediAuto_leads', JSON.stringify(leads)), [leads]);
+
+    // Theme Effect - V5 Extreme
+    useEffect(() => {
+        localStorage.setItem('site_theme', JSON.stringify(theme));
+        const root = document.documentElement;
+
+        // Apply all variables
+        root.style.setProperty('--color-bg', theme.bg || defaultTheme.bg);
+        root.style.setProperty('--color-card', theme.card || defaultTheme.card);
+        root.style.setProperty('--color-text', theme.text || defaultTheme.text);
+
+        root.style.setProperty('--color-accent', theme.accent || defaultTheme.accent);
+        root.style.setProperty('--color-accent-hover', theme.accent || defaultTheme.accent);
+        root.style.setProperty('--color-accent-glow', `${theme.accent || defaultTheme.accent}80`);
+    }, [theme]);
 
     // --- ACTIONS ---
     const updateProfile = (data) => setProfile(prev => ({ ...prev, ...data }));
@@ -85,18 +112,25 @@ export const ContentProvider = ({ children }) => {
         setGallery(prev => prev.filter(item => item.id !== id));
     };
 
+    const updateGalleryItem = (id, updates) => {
+        setGallery(prev => prev.map(item => item.id === id ? { ...item, ...updates } : item));
+    };
+
     const addLead = (lead) => {
         const newLead = { ...lead, id: Date.now(), date: new Date().toISOString() };
         setLeads(prev => [newLead, ...prev]);
     };
 
+    const updateTheme = (newTheme) => setTheme(newTheme);
+
     return (
         <ContentContext.Provider value={{
             profile, updateProfile,
             calculatorConfig, updateCalculator,
-            gallery, addGalleryItem, removeGalleryItem,
+            gallery, addGalleryItem, removeGalleryItem, updateGalleryItem,
             visibility, toggleSection,
-            leads, addLead
+            leads, addLead,
+            theme, updateTheme
         }}>
             {children}
         </ContentContext.Provider>

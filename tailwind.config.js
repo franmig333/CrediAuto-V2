@@ -8,18 +8,18 @@ export default {
     extend: {
       colors: {
         brand: {
-          900: '#000000', // Deep Black
-          800: '#121212', // Card Backgrounds
-          700: '#1F1F1F', // Separators
+          900: 'var(--color-bg)', // Dynamic Background
+          800: 'var(--color-card)', // Dynamic Card
+          700: '#1F1F1F', // Separators (Keep static or make dynamic if requested)
         },
         accent: {
-          DEFAULT: '#E62429', // Red Accent
-          hover: '#CC1F24',
-          glow: '#E6242980',
+          DEFAULT: 'var(--color-accent)',
+          hover: 'var(--color-accent-hover)',
+          glow: 'var(--color-accent-glow)',
         },
         tech: {
           gray: '#9CA3AF',
-          white: '#F3F4F6',
+          white: 'var(--color-text)', // Dynamic Text
         }
       },
       fontFamily: {

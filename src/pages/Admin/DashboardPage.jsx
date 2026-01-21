@@ -9,7 +9,7 @@ import {
     LogOut, User, Calculator, Image as ImageIcon, Users,
     Save, Trash2, Plus, Eye, EyeOff, MessageCircle, Upload, Loader2,
     FileSpreadsheet, FileText, Share2, CheckSquare, Square, X,
-    Facebook, Instagram, Linkedin, Globe, Hash
+    Facebook, Instagram, Linkedin, Globe, Hash, Palette, Link, Pencil, Check
 } from 'lucide-react';
 import clsx from 'clsx';
 import { compressImage } from '../../utils/imageUtils';
@@ -20,6 +20,7 @@ const SOCIAL_PLATFORMS = [
     { value: 'tiktok', label: 'TikTok', icon: Hash },
     { value: 'linkedin', label: 'LinkedIn', icon: Linkedin },
     { value: 'website', label: 'Sitio Web', icon: Globe },
+    { value: 'other', label: 'Otra / Personalizada', icon: Link },
 ];
 
 const DashboardPage = () => {
@@ -28,7 +29,7 @@ const DashboardPage = () => {
     const {
         profile, updateProfile,
         calculatorConfig, updateCalculator,
-        gallery, addGalleryItem, removeGalleryItem,
+        gallery, addGalleryItem, removeGalleryItem, updateGalleryItem,
         visibility, toggleSection,
         leads
     } = useContent();
@@ -247,11 +248,21 @@ const DashboardPage = () => {
                             <select
                                 value={social.platform}
                                 onChange={(e) => updateSocial(social.id, 'platform', e.target.value)}
-                                className="bg-brand-900 border border-brand-700 text-white rounded-lg px-3 py-2 text-sm focus:border-accent outline-none w-1/3"
+                                className="bg-brand-900 border border-brand-700 text-white rounded-lg px-3 py-2 text-sm focus:border-accent outline-none w-1/4"
                             >
                                 {SOCIAL_PLATFORMS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
                             </select>
-                            <Input value={social.url} onChange={(e) => updateSocial(social.id, 'url', e.target.value)} className="w-2/3" placeholder="https://..." />
+
+                            {social.platform === 'other' && (
+                                <Input
+                                    className="w-1/4"
+                                    placeholder="Nombre Red"
+                                    value={social.networkName || ''}
+                                    onChange={(e) => updateSocial(social.id, 'networkName', e.target.value)}
+                                />
+                            )}
+
+                            <Input value={social.url} onChange={(e) => updateSocial(social.id, 'url', e.target.value)} className={social.platform === 'other' ? "w-2/4" : "w-3/4"} placeholder="https://..." />
                             <button onClick={() => removeSocial(social.id)} className="text-red-500 p-2"><Trash2 size={18} /></button>
                         </div>
                     ))}
@@ -345,18 +356,87 @@ const DashboardPage = () => {
                 {/* Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {gallery.map(item => (
-                        <div key={item.id} className="relative group rounded-lg overflow-hidden aspect-square border border-brand-700">
-                            <img src={item.image} alt={item.caption} className="w-full h-full object-cover" />
-                            <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center p-2 text-center transition-all bg-opacity-90">
-                                <h5 className="text-white text-xs font-bold mb-1">{item.title || 'Sin Título'}</h5>
-                                <p className="text-tech-gray text-[10px] line-clamp-2">{item.caption}</p>
-                                <button onClick={() => removeGalleryItem(item.id)} className="mt-2 p-2 bg-red-600 rounded-full text-white hover:bg-red-700"><Trash2 size={16} /></button>
+                        <div key={item.id} className="relative group rounded-lg overflow-hidden border border-brand-700 bg-brand-800">
+                            <div className="aspect-square relative">
+                                <img src={item.image} alt={item.caption} className="w-full h-full object-cover" />
+                                <button onClick={() => removeGalleryItem(item.id)} className="absolute top-2 right-2 p-1.5 bg-red-600 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                                    <Trash2 size={16} />
+                                </button>
+                            </div>
+
+                            <div className="p-2 space-y-2">
+                                <input
+                                    className="w-full bg-brand-900 border border-brand-700 rounded px-2 py-1 text-xs font-bold text-white focus:border-accent outline-none"
+                                    value={item.title || ''}
+                                    placeholder="Título"
+                                    onChange={(e) => updateGalleryItem(item.id, { title: e.target.value })}
+                                />
+                                <textarea
+                                    className="w-full bg-brand-900 border border-brand-700 rounded px-2 py-1 text-[10px] text-tech-gray focus:border-accent outline-none resize-none"
+                                    value={item.caption || ''}
+                                    placeholder="Descripción"
+                                    rows={2}
+                                    onChange={(e) => updateGalleryItem(item.id, { caption: e.target.value })}
+                                />
                             </div>
                         </div>
                     ))}
                 </div>
             </Card>
         </div>
+    );
+
+    const renderAppearanceTab = () => (
+        <Card className="animate-fade-in space-y-6">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2"><Palette size={20} /> Cromática del Sitio</h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                <div className="space-y-4">
+                    <h3 className="font-bold text-sm text-tech-gray uppercase">Paleta de Colores</h3>
+
+                    {/* Background */}
+                    <div className="flex items-center gap-4 bg-brand-900 p-3 rounded-xl border border-brand-700">
+                        <input type="color" value={themeForm.bg || '#000000'} onChange={(e) => setThemeForm({ ...themeForm, bg: e.target.value })} className="w-10 h-10 rounded cursor-pointer bg-transparent border-0 p-0" />
+                        <div><p className="text-white text-xs font-bold">Fondo Principal</p><p className="text-[10px] text-tech-gray">Background global</p></div>
+                    </div>
+
+                    {/* Card */}
+                    <div className="flex items-center gap-4 bg-brand-900 p-3 rounded-xl border border-brand-700">
+                        <input type="color" value={themeForm.card || '#121212'} onChange={(e) => setThemeForm({ ...themeForm, card: e.target.value })} className="w-10 h-10 rounded cursor-pointer bg-transparent border-0 p-0" />
+                        <div><p className="text-white text-xs font-bold">Tarjetas / Secciones</p><p className="text-[10px] text-tech-gray">Contenedores secundarios</p></div>
+                    </div>
+
+                    {/* Text */}
+                    <div className="flex items-center gap-4 bg-brand-900 p-3 rounded-xl border border-brand-700">
+                        <input type="color" value={themeForm.text || '#F3F4F6'} onChange={(e) => setThemeForm({ ...themeForm, text: e.target.value })} className="w-10 h-10 rounded cursor-pointer bg-transparent border-0 p-0" />
+                        <div><p className="text-white text-xs font-bold">Texto Principal</p><p className="text-[10px] text-tech-gray">Legibilidad general</p></div>
+                    </div>
+
+                    {/* Accent */}
+                    <div className="flex items-center gap-4 bg-brand-900 p-3 rounded-xl border border-brand-700">
+                        <input type="color" value={themeForm.accent || '#E62429'} onChange={(e) => setThemeForm({ ...themeForm, accent: e.target.value })} className="w-10 h-10 rounded cursor-pointer bg-transparent border-0 p-0" />
+                        <div><p className="text-white text-xs font-bold">Color Acento</p><p className="text-[10px] text-tech-gray">Botones y destacados</p></div>
+                    </div>
+                </div>
+
+                {/* Preview */}
+                <div className="border border-brand-700 rounded-xl p-6 flex flex-col items-center gap-6" style={{ backgroundColor: themeForm.bg || '#000', color: themeForm.text || '#fff' }}>
+                    <p className="text-xs opacity-50 uppercase tracking-widest">Vista Previa en Vivo</p>
+
+                    <div className="p-6 rounded-xl w-full text-center shadow-lg" style={{ backgroundColor: themeForm.card || '#121212' }}>
+                        <h4 className="font-bold text-lg mb-2">Tarjeta de Ejemplo</h4>
+                        <p className="text-sm opacity-80 mb-4">Así se verán tus contenidos.</p>
+                        <button className="px-6 py-2 rounded-lg font-bold transition-all shadow-lg hover:scale-105" style={{ backgroundColor: themeForm.accent || 'red', color: '#fff' }}>
+                            Botón de Acción
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <Button onClick={saveTheme} className="w-full bg-white text-brand-900 hover:bg-gray-200 mt-4 font-bold flex justify-center items-center gap-2">
+                <Save size={18} /> Guardar Apariencia
+            </Button>
+        </Card>
     );
 
     const renderLeadsTab = () => (
@@ -400,17 +480,19 @@ const DashboardPage = () => {
             </nav>
 
             <div className="max-w-5xl mx-auto p-4">
-                <div className="grid grid-cols-4 gap-2 mb-6 bg-brand-800 p-1 rounded-xl">
+                <div className="grid grid-cols-5 gap-2 mb-6 bg-brand-800 p-1 rounded-xl">
                     <button onClick={() => setActiveTab('profile')} className={clsx("py-2 rounded-lg text-xs font-bold transition-all", activeTab === 'profile' ? "bg-brand-700 text-white" : "text-tech-gray hover:text-white")}>Perfil</button>
                     <button onClick={() => setActiveTab('calculator')} className={clsx("py-2 rounded-lg text-xs font-bold transition-all", activeTab === 'calculator' ? "bg-brand-700 text-white" : "text-tech-gray hover:text-white")}>Cerebro</button>
                     <button onClick={() => setActiveTab('gallery')} className={clsx("py-2 rounded-lg text-xs font-bold transition-all", activeTab === 'gallery' ? "bg-brand-700 text-white" : "text-tech-gray hover:text-white")}>Galería</button>
                     <button onClick={() => setActiveTab('leads')} className={clsx("py-2 rounded-lg text-xs font-bold transition-all", activeTab === 'leads' ? "bg-brand-700 text-white" : "text-tech-gray hover:text-white")}>CRM</button>
+                    <button onClick={() => setActiveTab('appearance')} className={clsx("py-2 rounded-lg text-xs font-bold transition-all", activeTab === 'appearance' ? "bg-brand-700 text-white" : "text-tech-gray hover:text-white")}>Apariencia</button>
                 </div>
                 <div className="min-h-[500px]">
                     {activeTab === 'profile' && renderProfileTab()}
                     {activeTab === 'calculator' && renderCalculatorTab()}
                     {activeTab === 'gallery' && renderGalleryTab()}
                     {activeTab === 'leads' && renderLeadsTab()}
+                    {activeTab === 'appearance' && renderAppearanceTab()}
                 </div>
             </div>
         </div>
