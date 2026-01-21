@@ -31,7 +31,8 @@ const DashboardPage = () => {
         calculatorConfig, updateCalculator,
         gallery, addGalleryItem, removeGalleryItem, updateGalleryItem,
         visibility, toggleSection,
-        leads
+        leads,
+        theme, updateTheme // V5: Theme Manager
     } = useContent();
 
     const [activeTab, setActiveTab] = useState('profile');
@@ -40,6 +41,7 @@ const DashboardPage = () => {
     // Forms state
     const [profileForm, setProfileForm] = useState(profile);
     const [calcForm, setCalcForm] = useState(calculatorConfig);
+    const [themeForm, setThemeForm] = useState(theme || { bg: '#000000', card: '#1D1D1D', text: '#FFFFFF', accent: '#E62429' }); // V5: Theme State
     const [newImage, setNewImage] = useState({ url: '', caption: '', title: '' }); // V5: Added title
 
     // CRM State
@@ -83,6 +85,11 @@ const DashboardPage = () => {
         }
         updateCalculator(calcForm);
         alert('Calculadora actualizada');
+    };
+
+    const saveTheme = () => {
+        updateTheme(themeForm);
+        alert('Apariencia actualizada');
     };
 
     const handleAddImage = (e) => {

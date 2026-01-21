@@ -4,6 +4,13 @@ const ContentContext = createContext();
 
 export const useContent = () => useContext(ContentContext);
 
+const defaultTheme = {
+    bg: '#000000',
+    card: '#1D1D1D',
+    text: '#FFFFFF',
+    accent: '#E62429',
+};
+
 const defaultProfile = {
     name: 'Paola Peña',
     title: 'Tu Auto Nuevo en 24h',
@@ -36,13 +43,6 @@ const defaultVisibility = {
     calculator: true,
     gallery: true,
     form: true
-};
-
-const defaultTheme = {
-    bg: '#000000',
-    card: '#121212',
-    text: '#F3F4F6',
-    accent: '#E62429',
 };
 
 export const ContentProvider = ({ children }) => {
