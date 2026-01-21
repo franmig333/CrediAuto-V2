@@ -10,6 +10,7 @@ export const PreQualifyForm = () => {
     const [formData, setFormData] = useState({ name: '', phone: '', id: '', income: '', carInterest: '' });
 
     const handlePhoneChange = (e) => {
+        if (!formData) return; // Safety check
         const val = e.target.value.replace(/\D/g, ''); // Only numbers
         if (val.length > 10) return; // Max 10 chars
 

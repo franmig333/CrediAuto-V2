@@ -234,6 +234,7 @@ const DashboardPage = () => {
                         <Input label="Teléfono (WhatsApp)" value={profileForm.phone} onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })} />
                     </div>
                     <Input label="Cargo / Título" value={profileForm.title} onChange={(e) => setProfileForm({ ...profileForm, title: e.target.value })} />
+                    <Input label="Email para Notificaciones" value={profileForm.email_notification || ''} onChange={(e) => setProfileForm({ ...profileForm, email_notification: e.target.value })} placeholder="ej: admin@crediauto.com" />
                     <Input label="Texto Botón WhatsApp" value={profileForm.whatsappButtonText} onChange={(e) => setProfileForm({ ...profileForm, whatsappButtonText: e.target.value })} />
                 </div>
             </div>
