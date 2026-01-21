@@ -195,11 +195,38 @@ const DashboardPage = () => {
     const toggleSelectAll = () => setSelectedLeads(selectedLeads.length === leads.length && leads.length > 0 ? [] : leads.map(l => l.id));
     const toggleSelectLead = (id) => setSelectedLeads(prev => prev.includes(id) ? prev.filter(lid => lid !== id) : [...prev, id]);
 
-    // ... Export functions (CSV, PDF, WhatsApp) omitted for brevity as they are same as V4 but V5 focus is on structure.
-    // Re-implementing simplified versions for this file content.
+    // --- EXPORT CSV (V5 Final) ---
     const exportCSV = () => {
-        // ... implementation same as V4 ...
+        const headers = ["Fecha", "Nombre", "Cédula", "Celular", "Ingresos", "Interés Auto"];
+        const rows = leads.map(l => [
+            new Date(l.date).toLocaleString(),
+            l.name,
+            l.id || l.cedula || '-',
+            l.phone || '-',
+            l.income,
+            l.carInterest || '-'
+        ]);
+
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += headers.join(",") + "\r\n";
+        rows.forEach(rowArray => {
+            const row = rowArray.map(field => `"${field}"`).join(",");
+            csvContent += row + "\r\n";
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+
+        // Dynamic Date Filename
+        const dateStr = new Date().toISOString().split('T')[0];
+        link.setAttribute("download", `Clientes_CrediAuto_${dateStr}.csv`);
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
+
     const printReport = () => {
         // ... implementation same as V4 ...
     };
@@ -485,36 +512,61 @@ const DashboardPage = () => {
     );
 
     const renderLeadsTab = () => (
-        <Card className="animate-fade-in p-0 overflow-hidden">
-            {/* Same as V4 but kept for completeness */}
-            <div className="p-6 border-b border-brand-700 bg-brand-800 flex justify-between items-center">
-                <h2 className="text-xl font-bold flex items-center gap-2"><Users size={20} /> CRM ({leads.length})</h2>
-                {selectedLeads.length > 0 && <Button onClick={forwardToWhatsApp} className="text-xs">WhatsApp ({selectedLeads.length})</Button>}
-            </div>
-            {/* Simplified table render */}
-            <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                    <thead className="bg-brand-900 text-tech-gray text-xs font-bold uppercase">
-                        <tr>
-                            <th className="p-4 w-10"><button onClick={toggleSelectAll}>{selectedLeads.length === leads.length ? <CheckSquare size={16} /> : <Square size={16} />}</button></th>
-                            <th className="p-4">Cliente</th>
-                            <th className="p-4">Auto</th>
-                            <th className="p-4">Ingreso</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-brand-800 bg-brand-800/30">
-                        {leads.map(lead => (
-                            <tr key={lead.id} className={clsx("hover:bg-brand-800", selectedLeads.includes(lead.id) && "bg-accent/10")}>
-                                <td className="p-4 text-center"><button onClick={() => toggleSelectLead(lead.id)}>{selectedLeads.includes(lead.id) ? <CheckSquare size={16} className="text-accent" /> : <Square size={16} className="text-tech-gray" />}</button></td>
-                                <td className="p-4 font-bold">{lead.name}</td>
-                                <td className="p-4">{lead.carInterest || '-'}</td>
-                                <td className="p-4 text-green-400">${lead.income}</td>
+        <div className="space-y-6 animate-fade-in">
+            {/* Quick Config Card (New V5) */}
+            <Card>
+                <h3 className="font-bold mb-4 flex items-center gap-2 text-sm text-tech-gray uppercase"><User size={16} /> Configuración Rápida</h3>
+                <div className="flex gap-4 items-end">
+                    <div className="flex-1">
+                        <Input
+                            label="Correo para Reportes"
+                            placeholder="admin@crediauto.com"
+                            value={profileForm.report_email || ''}
+                            onChange={(e) => setProfileForm({ ...profileForm, report_email: e.target.value })}
+                        />
+                    </div>
+                    <Button onClick={saveProfile} disabled={isProcessing} className="bg-brand-700 hover:bg-brand-600 mb-[2px]">
+                        {isProcessing ? 'Guardando...' : 'Guardar'}
+                    </Button>
+                </div>
+            </Card>
+
+            <Card className="p-0 overflow-hidden">
+                <div className="p-6 border-b border-brand-700 bg-brand-800 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <h2 className="text-xl font-bold flex items-center gap-2"><Users size={20} /> CRM ({leads.length})</h2>
+                    <div className="flex gap-2 w-full md:w-auto">
+                        {selectedLeads.length > 0 && <Button onClick={forwardToWhatsApp} className="text-xs flex-1 md:flex-none">WhatsApp ({selectedLeads.length})</Button>}
+                        {/* Magic Excel Button */}
+                        <Button onClick={exportCSV} className="text-xs bg-green-600 hover:bg-green-700 flex gap-2 items-center font-bold shadow-lg shadow-green-900/20 flex-1 md:flex-none">
+                            <FileSpreadsheet size={16} /> 📥 Descargar Excel
+                        </Button>
+                    </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm">
+                        <thead className="bg-brand-900 text-tech-gray text-xs font-bold uppercase">
+                            <tr>
+                                <th className="p-4 w-10"><button onClick={toggleSelectAll}>{selectedLeads.length === leads.length ? <CheckSquare size={16} /> : <Square size={16} />}</button></th>
+                                <th className="p-4">Cliente</th>
+                                <th className="p-4">Auto</th>
+                                <th className="p-4">Ingreso</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </Card>
+                        </thead>
+                        <tbody className="divide-y divide-brand-800 bg-brand-800/30">
+                            {leads.map(lead => (
+                                <tr key={lead.id} className={clsx("hover:bg-brand-800", selectedLeads.includes(lead.id) && "bg-accent/10")}>
+                                    <td className="p-4 text-center"><button onClick={() => toggleSelectLead(lead.id)}>{selectedLeads.includes(lead.id) ? <CheckSquare size={16} className="text-accent" /> : <Square size={16} className="text-tech-gray" />}</button></td>
+                                    <td className="p-4 font-bold">{lead.name}</td>
+                                    <td className="p-4">{lead.carInterest || '-'}</td>
+                                    <td className="p-4 text-green-400">${lead.income}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </Card>
+        </div>
     );
 
     return (
