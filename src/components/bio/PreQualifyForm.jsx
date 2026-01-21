@@ -6,14 +6,36 @@ import { MessageCircle } from 'lucide-react';
 
 export const PreQualifyForm = () => {
     const { profile, addLead } = useContent();
+    const [phoneError, setPhoneError] = useState('');
     const [formData, setFormData] = useState({ name: '', phone: '', id: '', income: '', carInterest: '' });
+
+    const handlePhoneChange = (e) => {
+        const val = e.target.value.replace(/\D/g, ''); // Only numbers
+        if (val.length > 10) return; // Max 10 chars
+
+        setFormData({ ...formData, phone: val });
+
+        // Real-time validation
+        if (val.length > 0 && !val.startsWith('09')) {
+            setPhoneError('Debe empezar con 09');
+        } else if (val.length > 0 && val.length < 10) {
+            setPhoneError('Faltan dígitos (mínimo 10)');
+        } else {
+            setPhoneError('');
+        }
+    };
+
+    const isFormValid = () => {
+        const { name, phone, id, income } = formData;
+        if (!name || !id || !income) return false;
+        if (phone.length !== 10 || !phone.startsWith('09')) return false;
+        return true;
+    };
 
     const handleWhatsApp = async () => {
         const { name, phone, id, income, carInterest } = formData;
-        if (!name || !phone || !id || !income) {
-            alert("Por favor completa todos los datos obligatorios.");
-            return;
-        }
+
+        if (!isFormValid()) return;
 
         // Save lead
         try {
@@ -22,7 +44,13 @@ export const PreQualifyForm = () => {
             console.error("Error saving lead", e);
         }
 
-        const message = `Hola ${profile.name}, quiero pre-calificar.%0A%0A*Mis Datos:*%0A- Nombre: ${name}%0A- Cédula: ${id}%0A- Teléfono: ${phone}%0A- Ingresos: $${income}%0A- Auto de Interés: ${carInterest || 'No especificado'}`;
+        const message = `Hola, quiero pre-calificar. Mis datos:%0A` +
+            `Nombre: ${name}%0A` +
+            `Cédula: ${id}%0A` +
+            `Celular: ${phone}%0A` +
+            `Ingresos: $${income}%0A` +
+            (carInterest ? `Interés: ${carInterest}` : '');
+
         window.open(`https://wa.me/${profile.phone}?text=${message}`, '_blank');
     };
 
@@ -42,11 +70,17 @@ export const PreQualifyForm = () => {
                     value={formData.id}
                     onChange={(e) => setFormData({ ...formData, id: e.target.value })}
                 />
-                <Input
-                    placeholder="Tu Teléfono / Celular"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                />
+                <div>
+                    <Input
+                        placeholder="Tu Celular (09...)"
+                        value={formData.phone}
+                        onChange={handlePhoneChange}
+                        className={phoneError ? "border-red-500 focus:border-red-500" : ""}
+                        type="tel"
+                    />
+                    {phoneError && <p className="text-red-500 text-xs mt-1 ml-1">{phoneError}</p>}
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                     <Input
                         placeholder="Ingresos ($)"
@@ -64,7 +98,11 @@ export const PreQualifyForm = () => {
 
             <Button
                 onClick={handleWhatsApp}
-                className="w-full bg-green-600 hover:bg-green-500 text-white h-14 text-lg font-bold shadow-lg shadow-green-900/20 flex items-center justify-center gap-2"
+                disabled={!isFormValid()}
+                className={`w-full h-14 text-lg font-bold shadow-lg flex items-center justify-center gap-2 transition-all ${isFormValid()
+                    ? "bg-green-600 hover:bg-green-500 text-white shadow-green-900/20"
+                    : "bg-gray-600 text-gray-300 cursor-not-allowed opacity-50"
+                    }`}
             >
                 <MessageCircle size={24} /> {profile.whatsappButtonText || 'Enviar por WhatsApp'}
             </Button>
