@@ -13,6 +13,7 @@ const defaultProfile = {
     activeBadges: true,
     whatsappButtonText: 'Enviar por WhatsApp',
     customFields: [], // [{ id, label, value }]
+    socialNetworks: [], // [{ id, platform, url }]
 };
 
 const defaultCalculator = {
@@ -20,7 +21,7 @@ const defaultCalculator = {
     minDownPaymentPct: 20,
     minPrice: 10000,
     maxPrice: 60000,
-    extraFee: 0, // Insurance or admin fee
+    additionalFees: [], // [{ id, name, cost }]
     availableTerms: [12, 24, 36, 48, 60] // Default terms
 };
 
@@ -76,8 +77,8 @@ export const ContentProvider = ({ children }) => {
 
     const toggleSection = (section) => setVisibility(prev => ({ ...prev, [section]: !prev[section] }));
 
-    const addGalleryItem = (url, caption) => {
-        setGallery(prev => [...prev, { id: Date.now(), image: url, caption }]);
+    const addGalleryItem = (url, caption, title) => {
+        setGallery(prev => [...prev, { id: Date.now(), image: url, caption, title }]);
     };
 
     const removeGalleryItem = (id) => {

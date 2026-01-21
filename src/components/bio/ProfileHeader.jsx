@@ -1,5 +1,5 @@
 import { useContent } from '../../context/ContentContext';
-import { Phone, CheckCircle2 } from 'lucide-react';
+import { Phone, CheckCircle2, Facebook, Instagram, Linkedin, Globe, Hash } from 'lucide-react';
 
 export const ProfileHeader = () => {
     const { profile } = useContent();
@@ -36,6 +36,35 @@ export const ProfileHeader = () => {
                             <span className="text-white font-medium">{field.value}</span>
                         </div>
                     ))}
+                </div>
+            )}
+
+            {/* Social Networks V5 */}
+            {profile.socialNetworks && profile.socialNetworks.length > 0 && (
+                <div className="flex gap-4 mb-6">
+                    {profile.socialNetworks.map((social) => {
+                        // Dynamic Icon Map
+                        const getIcon = () => {
+                            switch (social.platform) {
+                                case 'facebook': return <Facebook size={20} />;
+                                case 'instagram': return <Instagram size={20} />;
+                                case 'linkedin': return <Linkedin size={20} />;
+                                case 'tiktok': return <Hash size={20} />; // Using Hash for TikTok as placeholder or specific if available
+                                default: return <Globe size={20} />;
+                            }
+                        };
+                        return (
+                            <a
+                                key={social.id}
+                                href={social.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-10 h-10 rounded-full bg-brand-800 border border-brand-700 flex items-center justify-center text-tech-gray hover:text-white hover:border-accent hover:bg-brand-700 transition-all"
+                            >
+                                {getIcon()}
+                            </a>
+                        );
+                    })}
                 </div>
             )}
 

@@ -5,7 +5,7 @@ import { useContent } from '../../context/ContentContext';
 
 export const CreditCalculator = () => {
     const { calculatorConfig } = useContent();
-    const { interestRate, minDownPaymentPct, minPrice, maxPrice, extraFee, availableTerms } = calculatorConfig;
+    const { interestRate, minDownPaymentPct, minPrice, maxPrice, additionalFees, availableTerms } = calculatorConfig;
 
     const [carPrice, setCarPrice] = useState(minPrice);
     const [downPayment, setDownPayment] = useState(minPrice * (minDownPaymentPct / 100));
@@ -24,7 +24,6 @@ export const CreditCalculator = () => {
         const minDown = carPrice * (minDownPaymentPct / 100);
         let effectiveDown = downPayment;
 
-        // Auto-adjust down payment if below minimum
         if (effectiveDown < minDown) {
             effectiveDown = minDown;
         }
@@ -40,8 +39,11 @@ export const CreditCalculator = () => {
         const numerator = loanAmount * r * Math.pow(1 + r, term);
         const denominator = Math.pow(1 + r, term) - 1;
 
-        setMonthlyPayment((numerator / denominator) + (Number(extraFee) || 0));
-    }, [carPrice, downPayment, term, interestRate, minDownPaymentPct, extraFee]);
+        // Sum additional fees
+        const totalFees = (additionalFees || []).reduce((acc, fee) => acc + (Number(fee.cost) || 0), 0);
+
+        setMonthlyPayment((numerator / denominator) + totalFees);
+    }, [carPrice, downPayment, term, interestRate, minDownPaymentPct, additionalFees]);
 
     return (
         <Card className="mx-4 mb-8 bg-brand-800/50 backdrop-blur-sm border-brand-700">

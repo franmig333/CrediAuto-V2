@@ -18,8 +18,9 @@ export const DeliveryGallery = () => {
                             alt={item.caption}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
-                            <span className="text-xs text-white font-medium">{item.caption}</span>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
+                            <span className="text-white font-bold text-sm leading-tight">{item.title}</span>
+                            <span className="text-tech-gray text-[10px] mt-1 line-clamp-2">{item.caption}</span>
                         </div>
                     </div>
                 ))}
