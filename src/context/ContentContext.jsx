@@ -14,6 +14,8 @@ const defaultProfile = {
     whatsappButtonText: 'Enviar por WhatsApp',
     customFields: [], // [{ id, label, value }]
     socialNetworks: [], // [{ id, platform, url }]
+    schedule: 'Lunes a Viernes: 09:00 - 18:00',
+    outOfHoursMessage: 'Puedes escribirnos 24/7. Si estamos fuera de horario, te contactamos a primera hora.',
 };
 
 const defaultCalculator = {
@@ -71,8 +73,12 @@ export const ContentProvider = ({ children }) => {
     });
 
     const [theme, setTheme] = useState(() => {
-        const saved = localStorage.getItem('site_theme');
-        return saved ? JSON.parse(saved) : defaultTheme;
+        try {
+            const saved = localStorage.getItem('site_theme');
+            return saved ? JSON.parse(saved) : defaultTheme;
+        } catch (e) {
+            return defaultTheme;
+        }
     });
 
     // --- EFFECTS (Persistence) ---
@@ -84,17 +90,19 @@ export const ContentProvider = ({ children }) => {
 
     // Theme Effect - V5 Extreme
     useEffect(() => {
+        if (!theme) return; // Crash protection
         localStorage.setItem('site_theme', JSON.stringify(theme));
         const root = document.documentElement;
 
-        // Apply all variables
+        // Apply all variables with fallbacks
         root.style.setProperty('--color-bg', theme.bg || defaultTheme.bg);
         root.style.setProperty('--color-card', theme.card || defaultTheme.card);
         root.style.setProperty('--color-text', theme.text || defaultTheme.text);
 
-        root.style.setProperty('--color-accent', theme.accent || defaultTheme.accent);
-        root.style.setProperty('--color-accent-hover', theme.accent || defaultTheme.accent);
-        root.style.setProperty('--color-accent-glow', `${theme.accent || defaultTheme.accent}80`);
+        const accent = theme.accent || defaultTheme.accent;
+        root.style.setProperty('--color-accent', accent);
+        root.style.setProperty('--color-accent-hover', accent);
+        root.style.setProperty('--color-accent-glow', `${accent}80`);
     }, [theme]);
 
     // --- ACTIONS ---

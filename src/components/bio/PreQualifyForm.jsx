@@ -64,6 +64,13 @@ export const PreQualifyForm = () => {
             >
                 <MessageCircle size={24} /> {profile.whatsappButtonText || 'Enviar por WhatsApp'}
             </Button>
+
+            {/* Reassurance Message V5.1 */}
+            {profile.outOfHoursMessage && (
+                <p className="text-center text-[10px] text-tech-gray mt-4 max-w-xs mx-auto italic opacity-80">
+                    {profile.outOfHoursMessage}
+                </p>
+            )}
         </div>
     );
 };

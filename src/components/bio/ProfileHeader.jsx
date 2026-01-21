@@ -1,5 +1,5 @@
 import { useContent } from '../../context/ContentContext';
-import { Phone, CheckCircle2, Facebook, Instagram, Linkedin, Globe, Hash } from 'lucide-react';
+import { Phone, CheckCircle2, Facebook, Instagram, Linkedin, Globe, Hash, Clock } from 'lucide-react';
 
 export const ProfileHeader = () => {
     const { profile } = useContent();
@@ -26,6 +26,14 @@ export const ProfileHeader = () => {
                     </span>
                 ))}
             </div>
+
+            {/* Schedule Display V5.1 */}
+            {profile.schedule && (
+                <div className="mb-6 flex items-center justify-center gap-2 text-sm text-tech-gray bg-brand-800/30 px-4 py-2 rounded-full border border-brand-700/50">
+                    <Clock size={14} className="text-accent" />
+                    <span className="whitespace-pre-line">{profile.schedule}</span>
+                </div>
+            )}
 
             {/* Custom Dynamic Fields */}
             {profile.customFields && profile.customFields.length > 0 && (

@@ -9,7 +9,7 @@ import {
     LogOut, User, Calculator, Image as ImageIcon, Users,
     Save, Trash2, Plus, Eye, EyeOff, MessageCircle, Upload, Loader2,
     FileSpreadsheet, FileText, Share2, CheckSquare, Square, X,
-    Facebook, Instagram, Linkedin, Globe, Hash, Palette, Link, Pencil, Check
+    Facebook, Instagram, Linkedin, Globe, Hash, Palette, Link, Pencil, Check, Clock
 } from 'lucide-react';
 import clsx from 'clsx';
 import { compressImage } from '../../utils/imageUtils';
@@ -268,9 +268,33 @@ const DashboardPage = () => {
                     ))}
                 </div>
             </div>
+            {/* Business Hours - V5.1 */}
+            <div className="border-t border-brand-700 pt-6">
+                <h3 className="font-bold mb-4 flex items-center gap-2"><Clock size={16} /> Horarios de Atención</h3>
+                <div className="space-y-4">
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-tech-gray uppercase">Texto del Horario</label>
+                        <textarea
+                            className="w-full bg-brand-900 border border-brand-700 rounded-lg p-3 text-white focus:border-accent outline-none"
+                            rows={3}
+                            value={profileForm.schedule || ''}
+                            onChange={(e) => setProfileForm({ ...profileForm, schedule: e.target.value })}
+                            placeholder="Ej: Lunes a Viernes: 09:00 - 18:00..."
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-tech-gray uppercase">Mensaje de Tranquilidad (Formulario)</label>
+                        <Input
+                            value={profileForm.outOfHoursMessage || ''}
+                            onChange={(e) => setProfileForm({ ...profileForm, outOfHoursMessage: e.target.value })}
+                            placeholder="Mensaje pequeño debajo del botón de enviar..."
+                        />
+                    </div>
+                </div>
+            </div>
 
             <Button onClick={saveProfile} className="w-full bg-accent hover:bg-accent-hover text-white flex justify-center items-center gap-2 mt-4"><Save size={18} /> Guardar Perfil</Button>
-        </Card>
+        </Card >
     );
 
     const renderCalculatorTab = () => (
@@ -420,13 +444,13 @@ const DashboardPage = () => {
                 </div>
 
                 {/* Preview */}
-                <div className="border border-brand-700 rounded-xl p-6 flex flex-col items-center gap-6" style={{ backgroundColor: themeForm.bg || '#000', color: themeForm.text || '#fff' }}>
+                <div className="border border-brand-700 rounded-xl p-6 flex flex-col items-center gap-6" style={{ backgroundColor: themeForm?.bg || '#000', color: themeForm?.text || '#fff' }}>
                     <p className="text-xs opacity-50 uppercase tracking-widest">Vista Previa en Vivo</p>
 
-                    <div className="p-6 rounded-xl w-full text-center shadow-lg" style={{ backgroundColor: themeForm.card || '#121212' }}>
+                    <div className="p-6 rounded-xl w-full text-center shadow-lg" style={{ backgroundColor: themeForm?.card || '#121212' }}>
                         <h4 className="font-bold text-lg mb-2">Tarjeta de Ejemplo</h4>
                         <p className="text-sm opacity-80 mb-4">Así se verán tus contenidos.</p>
-                        <button className="px-6 py-2 rounded-lg font-bold transition-all shadow-lg hover:scale-105" style={{ backgroundColor: themeForm.accent || 'red', color: '#fff' }}>
+                        <button className="px-6 py-2 rounded-lg font-bold transition-all shadow-lg hover:scale-105" style={{ backgroundColor: themeForm?.accent || 'red', color: '#fff' }}>
                             Botón de Acción
                         </button>
                     </div>
