@@ -27,6 +27,18 @@ export const ProfileHeader = () => {
                 ))}
             </div>
 
+            {/* Custom Dynamic Fields */}
+            {profile.customFields && profile.customFields.length > 0 && (
+                <div className="grid grid-cols-2 gap-4 w-full max-w-xs mb-6 text-sm">
+                    {profile.customFields.map((field) => (
+                        <div key={field.id} className="bg-brand-800/50 p-2 rounded-lg border border-brand-700/50">
+                            <span className="block text-accent text-[10px] font-bold uppercase tracking-wider">{field.label}</span>
+                            <span className="text-white font-medium">{field.value}</span>
+                        </div>
+                    ))}
+                </div>
+            )}
+
             <a
                 href={`https://wa.me/${profile.phone}?text=Hola, vengo de tu perfil.`}
                 target="_blank"

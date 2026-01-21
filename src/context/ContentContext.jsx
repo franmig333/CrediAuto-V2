@@ -12,6 +12,7 @@ const defaultProfile = {
     badges: ['Asesora Certificada', 'Top Ventas 2024'],
     activeBadges: true,
     whatsappButtonText: 'Enviar por WhatsApp',
+    customFields: [], // [{ id, label, value }]
 };
 
 const defaultCalculator = {
@@ -19,6 +20,7 @@ const defaultCalculator = {
     minDownPaymentPct: 20,
     minPrice: 10000,
     maxPrice: 60000,
+    extraFee: 0, // Insurance or admin fee
     availableTerms: [12, 24, 36, 48, 60] // Default terms
 };
 

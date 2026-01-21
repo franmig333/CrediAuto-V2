@@ -5,7 +5,7 @@ import { useContent } from '../../context/ContentContext';
 
 export const CreditCalculator = () => {
     const { calculatorConfig } = useContent();
-    const { interestRate, minDownPaymentPct, minPrice, maxPrice, availableTerms } = calculatorConfig;
+    const { interestRate, minDownPaymentPct, minPrice, maxPrice, extraFee, availableTerms } = calculatorConfig;
 
     const [carPrice, setCarPrice] = useState(minPrice);
     const [downPayment, setDownPayment] = useState(minPrice * (minDownPaymentPct / 100));
@@ -27,9 +27,6 @@ export const CreditCalculator = () => {
         // Auto-adjust down payment if below minimum
         if (effectiveDown < minDown) {
             effectiveDown = minDown;
-            // Only update state if it's strictly necessary to avoid loops, 
-            // usually better to just visually show validation, but for simplicity:
-            // setDownPayment(minDown); 
         }
 
         const loanAmount = carPrice - effectiveDown;
@@ -43,8 +40,8 @@ export const CreditCalculator = () => {
         const numerator = loanAmount * r * Math.pow(1 + r, term);
         const denominator = Math.pow(1 + r, term) - 1;
 
-        setMonthlyPayment(numerator / denominator);
-    }, [carPrice, downPayment, term, interestRate, minDownPaymentPct]);
+        setMonthlyPayment((numerator / denominator) + (Number(extraFee) || 0));
+    }, [carPrice, downPayment, term, interestRate, minDownPaymentPct, extraFee]);
 
     return (
         <Card className="mx-4 mb-8 bg-brand-800/50 backdrop-blur-sm border-brand-700">
