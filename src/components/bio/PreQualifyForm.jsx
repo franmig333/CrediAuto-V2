@@ -8,7 +8,7 @@ export const PreQualifyForm = () => {
     const { profile, addLead } = useContent();
     const [formData, setFormData] = useState({ name: '', phone: '', id: '', income: '', carInterest: '' });
 
-    const handleWhatsApp = () => {
+    const handleWhatsApp = async () => {
         const { name, phone, id, income, carInterest } = formData;
         if (!name || !phone || !id || !income) {
             alert("Por favor completa todos los datos obligatorios.");
@@ -16,7 +16,11 @@ export const PreQualifyForm = () => {
         }
 
         // Save lead
-        addLead(formData);
+        try {
+            await addLead(formData);
+        } catch (e) {
+            console.error("Error saving lead", e);
+        }
 
         const message = `Hola ${profile.name}, quiero pre-calificar.%0A%0A*Mis Datos:*%0A- Nombre: ${name}%0A- Cédula: ${id}%0A- Teléfono: ${phone}%0A- Ingresos: $${income}%0A- Auto de Interés: ${carInterest || 'No especificado'}`;
         window.open(`https://wa.me/${profile.phone}?text=${message}`, '_blank');
