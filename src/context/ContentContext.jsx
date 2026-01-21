@@ -11,6 +11,7 @@ const defaultProfile = {
     photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
     badges: ['Asesora Certificada', 'Top Ventas 2024'],
     activeBadges: true,
+    whatsappButtonText: 'Enviar por WhatsApp',
 };
 
 const defaultCalculator = {

@@ -22,13 +22,17 @@ const LandingPage = () => {
                 {visibility.form && <PreQualifyForm />}
             </main>
 
-            {/* Simple Footer */}
-            <footer className="bg-brand-800 p-6 text-center border-t border-brand-700 mt-8">
-                <p className="text-xs text-tech-gray mb-4">
-                    &copy; {new Date().getFullYear()} CrediAuto AI
+            {/* Footer with Admin Access */}
+            <footer className="bg-brand-800 p-8 text-center border-t border-brand-700 mt-12 mb-safe">
+                <p className="text-xs text-tech-gray mb-6">
+                    &copy; {new Date().getFullYear()} CrediAuto AI. <br /> Tecnología Financiera Inteligente.
                 </p>
-                <Link to="/admin" className="inline-flex items-center gap-1 text-xs text-brand-700 hover:text-tech-gray transition-colors">
-                    <ShieldCheck size={12} /> acceso admin
+
+                <Link
+                    to="/admin"
+                    className="inline-flex items-center gap-2 text-[10px] uppercase tracking-widest text-brand-700 hover:text-tech-gray transition-colors border border-brand-700/50 px-3 py-1.5 rounded-full"
+                >
+                    <ShieldCheck size={10} className="text-brand-600" /> Admin Access
                 </Link>
             </footer>
         </div>
