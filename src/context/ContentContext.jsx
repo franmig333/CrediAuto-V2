@@ -24,6 +24,7 @@ const defaultProfile = {
     socialNetworks: [], // [{ id, platform, url }]
     schedule: 'Lunes a Viernes: 09:00 - 18:00',
     outOfHoursMessage: 'Puedes escribirnos 24/7. Si estamos fuera de horario, te contactamos a primera hora.',
+    logo: null, // V5: Logo Update
 };
 
 const defaultCalculator = {

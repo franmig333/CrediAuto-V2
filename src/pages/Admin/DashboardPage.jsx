@@ -44,6 +44,10 @@ const DashboardPage = () => {
     const [themeForm, setThemeForm] = useState(theme || { bg: '#000000', card: '#1D1D1D', text: '#FFFFFF', accent: '#E62429' }); // V5: Theme State
     const [newImage, setNewImage] = useState({ url: '', caption: '', title: '' }); // V5: Added title
 
+    // UI State
+    const [logoMode, setLogoMode] = useState('file'); // 'file' | 'url'
+    const [logoUrlInput, setLogoUrlInput] = useState('');
+
     // CRM State
     const [selectedLeads, setSelectedLeads] = useState([]);
 
@@ -244,7 +248,91 @@ const DashboardPage = () => {
         <Card className="space-y-6 animate-fade-in">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2"><User size={20} /> Perfil Bio V5</h2>
 
-            <div className="flex flex-col md:flex-row gap-6 items-start">
+            {/* --- LOGO & BRANDING (NEW) --- */}
+            <div className="bg-brand-900/50 p-4 rounded-xl border border-brand-700 space-y-4">
+                <h3 className="text-sm font-bold text-tech-gray uppercase flex items-center gap-2">
+                    <ImageIcon size={14} className="text-accent" /> Marca / Logo
+                </h3>
+                <div className="flex items-center gap-6">
+                    <div className="relative group">
+                        {/* Logo Preview or Placeholder */}
+                        <div className="w-24 h-24 rounded-full bg-brand-800 border-2 border-dashed border-brand-600 flex items-center justify-center overflow-hidden">
+                            {profileForm.logo ? (
+                                <img src={profileForm.logo} alt="Logo" className="w-full h-full object-contain p-2" />
+                            ) : (
+                                <span className="text-xs text-tech-gray text-center px-1">Sin Logo</span>
+                            )}
+                        </div>
+
+                        {/* Remove Button */}
+                        {profileForm.logo && (
+                            <button
+                                onClick={() => setProfileForm({ ...profileForm, logo: null })}
+                                className="absolute -top-1 -right-1 bg-red-600 rounded-full p-1 text-white shadow-lg hover:scale-110 transition-transform"
+                                title="Eliminar Logo"
+                            >
+                                <X size={12} />
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="space-y-3 flex-1">
+                        <div className="flex gap-4 text-xs font-bold border-b border-brand-700 pb-2 mb-2">
+                            <button onClick={() => setLogoMode('file')} className={clsx("pb-1 transition-colors", logoMode === 'file' ? "text-accent border-b-2 border-accent" : "text-tech-gray hover:text-white")}>📂 Subir Archivo</button>
+                            <button onClick={() => setLogoMode('url')} className={clsx("pb-1 transition-colors", logoMode === 'url' ? "text-accent border-b-2 border-accent" : "text-tech-gray hover:text-white")}>🔗 Pegar URL</button>
+                        </div>
+
+                        {logoMode === 'file' ? (
+                            <div className="space-y-2">
+                                <p className="text-xs text-tech-gray">Sube una imagen local (PNG/JPG &lt; 150KB).</p>
+                                <label className="bg-brand-700 hover:bg-brand-600 text-white text-xs px-4 py-2 rounded-lg cursor-pointer transition-colors inline-flex items-center gap-2">
+                                    <Upload size={14} />
+                                    Seleccionar Imagen
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={async (e) => {
+                                            const file = e.target.files[0];
+                                            if (!file) return;
+                                            if (file.size > 150 * 1024) return alert("⚠️ La imagen es muy pesada. Máximo 150KB.");
+
+                                            const reader = new FileReader();
+                                            reader.readAsDataURL(file);
+                                            reader.onload = () => setProfileForm(prev => ({ ...prev, logo: reader.result }));
+                                        }}
+                                    />
+                                </label>
+                            </div>
+                        ) : (
+                            <div className="space-y-2">
+                                <p className="text-xs text-tech-gray">Pega un enlace directo a la imagen.</p>
+                                <div className="flex gap-2">
+                                    <Input
+                                        placeholder="https://ejemplo.com/logo.png"
+                                        value={logoUrlInput}
+                                        onChange={(e) => setLogoUrlInput(e.target.value)}
+                                        className="text-xs h-8"
+                                    />
+                                    <Button
+                                        onClick={() => {
+                                            if (!logoUrlInput.startsWith('http')) return alert('URL inválida');
+                                            setProfileForm(prev => ({ ...prev, logo: logoUrlInput }));
+                                            setLogoUrlInput(''); // Clear after set? Or keep? Better clear to imply action taken.
+                                        }}
+                                        className="h-8 text-xs bg-brand-700"
+                                    >
+                                        <Check size={14} />
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* --- ADVISOR PROFILE --- */}
+            <div className="flex flex-col md:flex-row gap-6 items-start pt-4 border-t border-brand-700">
                 <div className="w-full md:w-1/3 text-center">
                     <div className="relative inline-block group">
                         <img src={profileForm.photo} alt="Preview" className="w-32 h-32 rounded-full object-cover border-4 border-accent mx-auto mb-4 bg-brand-900" />
@@ -254,6 +342,7 @@ const DashboardPage = () => {
                             <input type="file" accept="image/*" className="hidden" onChange={(e) => handleSmartUpload(e, (b64) => setProfileForm({ ...profileForm, photo: b64 }))} />
                         </label>
                     </div>
+                    <p className="text-xs text-tech-gray">Foto de Perfil</p>
                 </div>
                 <div className="w-full md:w-2/3 space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -6,6 +6,17 @@ export const ProfileHeader = () => {
 
     return (
         <div className="flex flex-col items-center pt-10 pb-8 px-4 text-center">
+            {/* BRAND LOGO (V5) */}
+            {profile.logo && (
+                <div className="mb-6 animate-fade-in">
+                    <img
+                        src={profile.logo}
+                        alt="Empresa"
+                        className="h-16 w-auto object-contain mx-auto drop-shadow-lg"
+                    />
+                </div>
+            )}
+
             <div className="relative mb-6 group">
                 <div className="absolute -inset-1 bg-accent-glow rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
                 <img
